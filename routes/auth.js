@@ -1,12 +1,13 @@
 const jwt = require('express-jwt');
-const secret = require('../config').secret;
+// const secret = require('../config').secret;
+const { secret } = require('../config');
 
 function getTokenFromHeader(req) {
-  if(!req.headers.authorization) {
+  if (!req.headers.authorization) {
     return null;
-  } 
+  }
   const token = req.headers.authorization.split(' ');
-  if(token[0] !== 'Ecommerce') {
+  if (token[0] !== 'Ecommerce') {
     return null;
   }
   return token[1];
@@ -16,14 +17,14 @@ const auth = {
   required: jwt({
     secret,
     userProperty: 'payload',
-    getToken: getTokenFromHeader
+    getToken: getTokenFromHeader,
   }),
   optional: jwt({
     secret,
     userProperty: 'payload',
     credentialsRequired: false,
-    getToken: getTokenFromHeader
-  })
+    getToken: getTokenFromHeader,
+  }),
 };
 
 module.exports = auth;

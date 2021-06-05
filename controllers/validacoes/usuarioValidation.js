@@ -1,7 +1,6 @@
 const BaseJoi = require('joi');
-const Extenisons = require('joi-date-extensions');
-const Joi = BaseJoi.extend(Extension);
+const Extensions = require('joi-date-extensions');
 
-export const UsuarioValidation = {
-  
-}
+const Joi = BaseJoi.extend(Extensions);
+
+export const UsuarioValidation = {};

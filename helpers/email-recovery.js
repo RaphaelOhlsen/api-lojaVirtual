@@ -1,6 +1,7 @@
-const tranpsorter = require('nodemailer')
-  .createTransport(require('../config/email'));
-const { api: link} = require('../config/index');
+const tranpsorter = require('nodemailer').createTransport(
+  require('../config/email')
+);
+const { api: link } = require('../config/index');
 
 module.exports = ({ usuario, recovery }, cb) => {
   const message = `
@@ -20,24 +21,29 @@ module.exports = ({ usuario, recovery }, cb) => {
     <p>Atenciosamente, Loja TI</p>
   `;
 
-  const opcoesEmail= {
-    from:'naoresponder@lojati.com',
+  const opcoesEmail = {
+    from: 'naoresponder@lojati.com',
     to: usuario.email,
-    subject: "Redefinição de Senha - Loja TI",
-    html: message
+    subject: 'Redefinição de Senha - Loja TI',
+    html: message,
   };
 
-  if(process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production') {
     tranpsorter.sendMail(opcoesEmail, (error, info) => {
       if (error) {
         console.log(error);
-        return cb('Aconteceu um erro no envio do email, tente novamente')
-      } else {
-          return cb(null, "Link para redefinição de senha foi enviado com sucesso para o seu email");
+        return cb('Aconteceu um erro no envio do email, tente novamente');
       }
-    })
-    } else {
-      console.log(opcoesEmail);
-      return cb(null, 'Link para redefinição de senha enviado com sucesso para seu email');
+      return cb(
+        null,
+        'Link para redefinição de senha foi enviado com sucesso para o seu email'
+      );
+    });
+  } else {
+    console.log(opcoesEmail);
+    return cb(
+      null,
+      'Link para redefinição de senha enviado com sucesso para seu email'
+    );
   }
-}
+};

@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon server.js",
     "build": "NODE_ENV=production pm2 start server.js --name=\"ecommerce-api\"",
-    "test": "mocha --timeout 2000 --exit"
+    "test": "mocha --timeout 2000 --exit",
+    "lint": "eslint ./src ./test --ext ts",
+    "lint:fix": "eslint ./src ./test --ext ts --fix",
+    "style:check": "prettier --check 'src/**/*.ts' 'test/**/*.ts'",
+    "style:fix": "prettier --write './**/*.js'"
   },
   "author": "Raphael Bernardo Ohlsen",
   "license": "ISC",

@@ -1,7 +1,7 @@
-const router = require("express").Router();
-const lojaValidation = require('../../../controllers/validacoes/lojaValidation')
-const auth = require("../../auth");
-const LojaController = require("../../../controllers/LojaController");
+const router = require('express').Router();
+const lojaValidation = require('../../../controllers/validacoes/lojaValidation');
+const auth = require('../../auth');
+const LojaController = require('../../../controllers/LojaController');
 
 const lojaController = new LojaController();
 
