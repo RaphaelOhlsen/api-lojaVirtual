@@ -1,7 +1,7 @@
 const BaseJoi = require('joi');
-const Extensions = require('joi-date-extensions');
+const Extension = require('joi-date-extensions');
 
-const Joi = BaseJoi.extend(Extensions);
+const Joi = BaseJoi.extend(Extension);
 
 const UsuarioValidation = {
   show: {
