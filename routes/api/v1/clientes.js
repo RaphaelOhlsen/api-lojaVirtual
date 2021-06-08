@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const router = require('express').Router();
 
 const Validation = require('express-validation');
@@ -14,7 +15,7 @@ router.get('/', auth.required, LojaValidation.admin, clienteController.index);
 // router.get('/search/:search/pedidos', auth.required, LojaValidation.admin, clienteController.searchPedidos);
 router.get('/search/:search', auth.required, LojaValidation.admin, clienteController.search);
 router.get('/admin/:id', auth.required, LojaValidation.admin, clienteController.showAdmin);
-// router.get('/admin/:id/:pedidos', auth.required, LojaValidation.admin, clienteController.showPedidosCliente);
+// router.get('/admin/:id/pedidos', auth.required, LojaValidation.admin, clienteController.showPedidosCliente);
 
 router.put('/admin/:id', auth.required, LojaValidation.admin, clienteController.updateAdmin);
 
