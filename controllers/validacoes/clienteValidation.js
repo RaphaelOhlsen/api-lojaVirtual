@@ -1,0 +1,104 @@
+const BaseJoi = require('joi');
+const Extension = require('joi-date-extensions');
+
+const Joi = BaseJoi.extend(Extension);
+
+const ClienteValidation = {
+  index: {
+    query: {
+      query: {
+        offset: Joi.Number(),
+        limit: Joi.Number()
+      }
+    },
+    search: {
+      query: {
+        offset: Joi.Number(),
+        limit: Joi.Number()
+      },
+      params: {
+        search: Joi.string().required()
+      }
+    },
+    showAdmin: {
+      params: {
+        id: Joi.string().alphanum().length(24).required()
+      }
+    },
+    updateAdmin: {
+      params: {
+        id: Joi.string().alphanum().length(24).required()
+      },
+      body: {
+        nome: Joi.string().optional(),
+        cpf: Joi.string().lenght(14).optional(),
+        email: Joi.string().email().optional(),
+        telefones: Joi.array().items(Joi.string()).optional(),
+        endereco: Joi.object({
+          local: Joi.string().required(),
+          numero: Joi.string().required(),
+          complemento: Joi.string(),
+          bairro: Joi.string().required(),
+          cidade: Joi.string().required(),
+          estado: Joi.string().required(),
+          CEP: Joi.string().required(),
+        }).optional(),
+        dataDeNascimento: Joi.date().format('YYYY-MM-DD').raw().optional()
+      }
+    },
+    show: {
+      query: {
+        loja: Joi.string().alphanum().length(24).required()
+      }
+    },
+    update: {
+      query: {
+        loja: Joi.string().alphanum().length(24).required()
+      },
+      params: {
+        id: Joi.string().alphanum().length(24).required()
+      },
+      body: {
+        nome: Joi.string().optional(),
+        password: Joi.string().optional(),
+        cpf: Joi.string().lenght(14).optional(),
+        email: Joi.string().email().optional(),
+        telefones: Joi.array().items(Joi.string()).optional(),
+        endereco: Joi.object({
+          local: Joi.string().required(),
+          numero: Joi.string().required(),
+          complemento: Joi.string(),
+          bairro: Joi.string().required(),
+          cidade: Joi.string().required(),
+          estado: Joi.string().required(),
+          CEP: Joi.string().required(),
+        }).optional(),
+        dataDeNascimento: Joi.date().format('YYYY-MM-DD').raw().optional()
+      }
+    },
+    store: {
+      query: {
+        loja: Joi.string().alphanum().length(24).required()
+      },
+      body: {
+        nome: Joi.string().required(),
+        password: Joi.string().required(),
+        cpf: Joi.string().length(14).required(),
+        email: Joi.string().email().required(),
+        telefones: Joi.array().items(Joi.string()).required(),
+        endereco: Joi.object({
+          local: Joi.string().required(),
+          numero: Joi.string().required(),
+          complemento: Joi.string(),
+          bairro: Joi.string().required(),
+          cidade: Joi.string().required(),
+          estado: Joi.string().required(),
+          CEP: Joi.string().required()
+        }).required(),
+        dataDeNascimento: Joi.date().format('YYYY-MM-DD').raw().required()
+      }
+    },
+  }
+};
+
+module.exports = { ClienteValidation };
