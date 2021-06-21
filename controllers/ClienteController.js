@@ -13,14 +13,13 @@ class ClienteController {
   
   // GET / index
   async index(req, res, next) {
-    const { offset, limit, loja } = req.query;
-    const offset = Number(offset) || 0;
-    const limit = Number(limit) || 30;
+    const offset = Number(req.query.offset) || 0;
+    const limit = Number(req.query.limit) || 30;
     
     try {
       const clientes = await Cliente.paginate(
-        {loja: loja},
-        {offset, limit, populate: 'usuario'}
+        {loja: req.query.loja},
+        {offset, limit, populate: { path:"usuario", select: "-salt -hash" }}
       );
       return res.send({ clientes })
     } catch(e) {
@@ -35,15 +34,14 @@ class ClienteController {
 
   //GET /search/:search
   async search(req, res, next) {
-    const { offset, limit, loja } = req.query;
-    const offset = Number(offset) || 0;
-    const limit = Number(limit) || 30;
+    const offset = Number(req.query.offset) || 0;
+    const limit = Number(req.query.limit) || 30;
     const search = new RegExp(req.params.search, 'i');
     
     try {
       const clientes = await Cliente.paginate(
-        {loja: loja, nome: { $regex: search }},
-        {offset, limit, populate: 'usuario'}
+        {loja: req.query.loja, nome: { $regex: search }},
+        {offset, limit, populate: { path:"usuario", select: "-salt -hash" }}
       );
       return res.send({ clientes })
     } catch(e) {
@@ -56,7 +54,7 @@ class ClienteController {
     const id  = req.params.id;
     const loja = req.query.loja;
     try {
-      const cliente = await Cliente.findOne({ _id: id, loja: loja}).populate('usuario');
+      const cliente = await Cliente.findOne({ _id: id, loja: loja}).populate({ path:"usuario", select: "-salt -hash" });
       return res.send({ cliente });
     } catch(e) {
       next(e)
@@ -79,7 +77,7 @@ class ClienteController {
       dataDeNascimento
     } = req.body;
     try {
-      const cliente = await Cliente.findById(req.params.id).populate('usuario');
+      const cliente = await Cliente.findById(req.params.id).populate({ path:"usuario", select: "-salt -hash" });
       if (nome) {
         cliente.usuario.nome = nome;
         cliente.nome = nome;
@@ -101,16 +99,16 @@ class ClienteController {
    * CLIENTE
    */
 
-  async show (req, res, next) {
-    const usuario = req.payload.id;
-    const loja = req.query.loja;
-    try {
-      const cliente = await (await Cliente.findOne({ usuario, loja })).populate('usuario');
-      return res.send({ cliente });
-    }catch(e) {
-      next(e);
-    }
+    async show (req,res,next){
+      console.log(req.payload.id);
+      try {
+          const cliente = await Cliente.findOne({ usuario: req.payload.id, loja: req.query.loja }).populate({ path:"usuario", select: "-salt -hash" });
+          return res.send({ cliente });
+      }catch(e){
+          next(e);
+      }
   }
+
 
   async store (req, res, next) {
     const {
@@ -150,7 +148,8 @@ class ClienteController {
     const id = req.payload.id;
     
     try {
-      const cliente = await Cliente.findById(id).populate('usuario');
+      const cliente = await Cliente.findOne({usuario: id}).populate('usuario');
+      if (!cliente) return res.send({ error: 'Cliente não existe.'})
       if (nome) {
         cliente.usuario.nome = nome;
         cliente.nome = nome;
@@ -162,17 +161,21 @@ class ClienteController {
       if (endereco) cliente.endereco = endereco;
       if (dataDeNascimento) cliente.dataDeNascimento = dataDeNascimento;
 
-    await cliente.save();
-    return res.send({ cliente });
+      await cliente.save();
+      cliente.usuario = {
+        email: cliente.usuario.email,
+        _id: cliente.usuario._id,
+        permissao: cliente.usuario.permissao
+      }
+      return res.send({ cliente });
     } catch(e) {
       next(e);
     }
   }
 
   async remove(req, res, next) {
-    const { id: usuario } = req.payload.id;
     try {
-      const cliente = await Cliente.findOne({ usuario }).populate('usuario');
+      const cliente = await Cliente.findOne({ usuario: req.payload.id }).populate('usuario');
       if (!cliente) return res.status(400).send({ error: "Este usuario não existe" });
       await cliente.usuario.remove();
       cliente.deletado = true;
