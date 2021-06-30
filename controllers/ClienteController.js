@@ -6,7 +6,6 @@ const Usuario = mongoose.model('Usuario');
 class ClienteController {
 
    /**
-   * 
    * ADMIN
    */
 
@@ -95,7 +94,6 @@ class ClienteController {
   }
 
    /**
-   * 
    * CLIENTE
    */
 

@@ -77,5 +77,7 @@ class CategoriaController {
    * PRODUTOS  
    */
 
-  
+
 }
+
+module.exports = CategoriaController;
