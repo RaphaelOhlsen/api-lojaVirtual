@@ -69,7 +69,7 @@ class UsuarioController {
         if (!usuario) { return res.status(401).json({ errors: 'Usuario não registrado' }); }
         return usuario
           .remove()
-          .then(() => res.json({ deletado: true }))
+          .then(() => res.json({ deleted: true }))
           .catch(next);
       })
       .catch(next);

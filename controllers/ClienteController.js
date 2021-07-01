@@ -178,7 +178,7 @@ class ClienteController {
       await cliente.usuario.remove();
       cliente.deletado = true;
       await cliente.save();
-      return res.send({ deletado: true });
+      return res.send({ deleted: true });
     } catch(e) {
       next(e);
     }

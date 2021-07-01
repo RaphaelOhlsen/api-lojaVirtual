@@ -67,7 +67,7 @@ class CategoriaController {
     try {
       const categoria = await Categoria.findById(req.params.id);
       await categoria.remove();
-      return res.send({ deletado: true});
+      return res.send({ deleted: true});
     } catch(e) {
       next(e);
     }
