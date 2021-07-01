@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Categoria = mongoose.model('Categoria');
 
 class CategoriaController {
-  // GET /index
+  // GET / - index
   index(req, res, next) {
     Categoria.find({ loja: req.query.loja })
       .select('_id produtos nome codigo loja')

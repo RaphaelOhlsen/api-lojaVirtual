@@ -3,6 +3,20 @@ const mongoose = require('mongoose');
 const Produto = mongoose.model('Produto');
 const Categoria = mongoose.model('Categoria');
 
+const getSort = (sortType) => {
+  switch(sortType){
+    case "alfabetica_a-z":
+      return { titulo: 1 };
+    case "alfabetica_z-a":
+      return { titulo: -1}
+    case "preco-crescente":
+      return { preco: 1 };
+    case "preco-decrescente":
+      return { preco: -1 };
+    default:
+      return {}
+  }
+}
 class ProdutoController {
   /**
    * ADMIN  
@@ -109,7 +123,6 @@ class ProdutoController {
   }
 
   // DELETE /:id - remove
-
   async remove(req, res, next) {
     const { id } = req.params;
     const { loja } = req.query;
@@ -122,14 +135,94 @@ class ProdutoController {
         categoria.produtos = categoria.produtos.filter(item => item !== produto._id);
         await categoria.save();
       }
-      
+
       await produto.remove();
       return res.send({ deleted: true});
     } catch(e) {
       next(e);
     }
-    
   }
+
+  /**
+   * CLIENTE  
+   */
+
+  // GET / - index
+  async index(req, res, next) {
+    const { loja } = req.query;
+    const offset = Number(req.query.offset) || 0;
+    const limit = Number(req.query.limit) || 30;
+
+    try {
+      const produtos = await Produto.paginate(
+        { loja },
+        { offset, limit, sort: getSort(req.query.sortType) }
+      );
+      return res.send({ produtos });
+    } catch(e) {
+      next(e);
+    }
+  }
+
+  // GET /disponiveis - indexDisponiveis
+  async indexDisponiveis(req, res, next) {
+    const { loja } = req.query;
+    const offset = Number(req.query.offset) || 0;
+    const limit = Number(req.query.limit) || 30;
+
+    try {
+      const produtos = await Produto.paginate(
+        { loja, disponibilidade: true },
+        { offset, limit, sort: getSort(req.query.sortType) }
+      );
+      return res.send({ produtos });
+    } catch(e) {
+      next(e);
+    }
+  }
+
+  // GET /search/:search - search
+  async search(req, res, next) {
+    const { loja } = req.query;
+    const offset = Number(req.query.offset) || 0;
+    const limit = Number(req.query.limit) || 30;
+    const search = new RegExp(req.params.search, "i");
+
+    try {
+      const produtos = await Produto.paginate(
+        {
+          loja,
+          $or: [
+            { "titulo": { $regex: search } },
+            { "descricao": { $regex: search } },
+            { "sku": { $regex: search } },
+          ]
+        },
+        { offset, limit, sort: getSort(req.query.sortType) }
+      );
+      
+      return res.send({ produtos });
+    } catch(e) {
+      next(e);
+    }
+  }
+
+  // GET /:id - show
+  async show(req, res, next) {
+    const { loja } = req.query;
+    const { id } = req.params;
+
+    try {
+      const produto = await Produto
+        .findById(id)
+        .populate(['avaliacoes', 'variacoes', 'loja']);
+        
+      return res.send({ produto });
+    } catch(e) {
+      next(e);
+    }
+  }
+
 }
 
 module.exports = ProdutoController;
