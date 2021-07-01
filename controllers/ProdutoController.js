@@ -209,14 +209,13 @@ class ProdutoController {
 
   // GET /:id - show
   async show(req, res, next) {
-    const { loja } = req.query;
     const { id } = req.params;
 
     try {
       const produto = await Produto
         .findById(id)
         .populate(['avaliacoes', 'variacoes', 'loja']);
-        
+
       return res.send({ produto });
     } catch(e) {
       next(e);

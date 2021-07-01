@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const Categoria = mongoose.model('Categoria');
+const Produto = mongoose.model('Produto');
 
 class CategoriaController {
   // GET / - index
@@ -77,7 +78,61 @@ class CategoriaController {
    * PRODUTOS  
    */
 
+  // GET /:id/produtos - showProdutos
+  async showProdutos(req, res, next) {
+    const { offset, limit } = req.query;
+    const { id } = req.params.id;
 
+    try {
+      const produtos = await Produto.paginate(
+        { categoria: id},
+        { offset: Number(offset) || 0, limit: Number(offset) || 30 } 
+      );
+
+      return res.send({ produtos });
+    } catch(e) {
+      next(e);
+    }
+  }
+
+  // PUT /:id/produtos - updateProdutos
+  async updateProdutos(req, res, next) {
+    const { id } = req.params;
+    const { produtos } = req.body;
+
+    try {
+      const categoria = await Categoria.findById(id);
+      
+      if(produtos) categoria.produtos = produtos;
+      await categoria.save();
+
+      let _produtos = await Produto.find({
+        $or: [
+          { categoria: id },
+          { _id: { $in: produtos } }
+        ]
+      });
+
+      _produtos = await Promise.all(_produtos.map(async (produto) => {
+        if(!produtos.includes(produto._id.toSring())) {
+          produto.categoria = null;
+        } else {
+          produto.categoria = id;
+        }
+        await produtos.save();
+        return produto;
+      }));
+
+      const resultado = await Produto.paginate(
+        { categoria: id},
+        { offset: 0, limit: 30 } 
+      );
+      
+      return res.send({ produtos: resultado });
+    } catch(e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = CategoriaController;
