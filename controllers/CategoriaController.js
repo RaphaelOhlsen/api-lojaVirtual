@@ -81,12 +81,12 @@ class CategoriaController {
   // GET /:id/produtos - showProdutos
   async showProdutos(req, res, next) {
     const { offset, limit } = req.query;
-    const { id } = req.params.id;
+    const { id } = req.params;
 
     try {
       const produtos = await Produto.paginate(
         { categoria: id},
-        { offset: Number(offset) || 0, limit: Number(offset) || 30 } 
+        { offset: Number(offset) || 0, limit: Number(limit) || 30 } 
       );
 
       return res.send({ produtos });
@@ -114,12 +114,12 @@ class CategoriaController {
       });
 
       _produtos = await Promise.all(_produtos.map(async (produto) => {
-        if(!produtos.includes(produto._id.toSring())) {
+        if(!produtos.includes(produto._id.toString())) {
           produto.categoria = null;
         } else {
           produto.categoria = id;
         }
-        await produtos.save();
+        await produto.save();
         return produto;
       }));
 

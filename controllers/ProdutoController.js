@@ -214,7 +214,11 @@ class ProdutoController {
     try {
       const produto = await Produto
         .findById(id)
-        .populate(['avaliacoes', 'variacoes', 'loja']);
+        .populate([
+          // 'avaliacoes',
+          // 'variacoes',
+          'loja'
+        ]);
 
       return res.send({ produto });
     } catch(e) {

@@ -8,7 +8,7 @@ const ProdutoSchema = Schema({
   titulo: { type: String, required: true },
   disponibilidade: { type: Boolean, default: true },
   descricao: { type: String, required: true },
-  fotos: { type: Array, default: true },
+  fotos: { type: Array, default: [] },
   preco: { type: Number, required: true },
   promocao: { type: Number },
   sku: { type: String, required: true },
