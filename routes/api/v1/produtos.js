@@ -23,6 +23,11 @@ router.get('/search/:search', Validation(ProdutoValidation.search), produtoConto
 router.get('/:id', Validation(ProdutoValidation.show), produtoContoller.show);
 
 // VARIACOES
+router.get(
+  '/:id/variacoes',
+  Validation(ProdutoValidation.showVariacoes),
+  produtoContoller.showVariacoes
+);
 
 // AVALIACOES
 router.get(
