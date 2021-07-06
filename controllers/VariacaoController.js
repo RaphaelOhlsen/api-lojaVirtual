@@ -75,8 +75,7 @@ class VariacaoController {
       preco,
       promocao,
       entrega,
-      quantidade,
-      disponibilidade
+      quantidade
     } = req.body;
     const { id: _id } = req.params;
     const { loja, produto } = req.query;
@@ -101,7 +100,7 @@ class VariacaoController {
   }
 
   //PUT /images/:id - updateImages
-  async uploadImages(req, res, next) {
+  async updateImages(req, res, next) {
     const { id: _id } = req.params;
     const { loja, produto } = req.query;
     try {
@@ -119,8 +118,8 @@ class VariacaoController {
   }
 
   // DELETE /:id - remove 
-  async delete(req, res, next) {
-    const { id } = req.params;
+  async remove(req, res, next) {
+    const { id: _id } = req.params;
     const { loja, produto } = req.query;
 
     try {

@@ -3,15 +3,14 @@ const router = require('express').Router();
 const Validation = require('express-validation');
 const VariacaoController = require('../../../controllers/VariacaoController');
 
+const upload = require('../../../config/multer');
 const auth = require('../../auth');
 const { LojaValidation } = require('../../../controllers/validacoes/lojaValidation');
-const { VariacaoValidation } = require('../../../controllers/validacoes/avaliacaoValidation');
-const upload = require('../../../config/multer');
+const { VariacaoValidation } = require('../../../controllers/validacoes/variacaoValidation');
 
 const variacaoController = new VariacaoController();
 
-// CLIENTES/VISITANTES
-router.get('/', variacaoController.index);
+router.get('/', Validation(VariacaoValidation.index), variacaoController.index);
 router.get('/:id', Validation(VariacaoValidation.show), variacaoController.show);
 
 router.post('/', auth.required, LojaValidation.admin, Validation(VariacaoValidation.store), variacaoController.store);
