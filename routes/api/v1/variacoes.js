@@ -16,12 +16,12 @@ router.get('/:id', Validation(VariacaoValidation.show), variacaoController.show)
 router.post('/', auth.required, LojaValidation.admin, Validation(VariacaoValidation.store), variacaoController.store);
 router.put('/:id', auth.required, LojaValidation.admin, Validation(VariacaoValidation.update), variacaoController.update);
 router.put(
-  '/imgages/:id',
+  '/images/:id',
   auth.required,
   LojaValidation.admin,
   Validation(VariacaoValidation.updateImages),
   upload.array('files', 4),
-  variacaoController.update
+  variacaoController.updateImages
 );
 router.delete('/:id', auth.required, LojaValidation.admin, Validation(VariacaoValidation.remove), variacaoController.remove);
 

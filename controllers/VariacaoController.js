@@ -41,7 +41,7 @@ class VariacaoController {
     } = req.body;
 
     try { 
-      const _produto = await Produto.find(produto);
+      const _produto = await Produto.findById(produto);
       if (!_produto) return res.status(400).send({ error: "Produto não encontrado"});
 
       const variacao = new Variacao({
@@ -49,7 +49,6 @@ class VariacaoController {
         nome,
         preco,
         promocao,
-        fotos,
         entrega,
         quantidade,
         loja, 
@@ -62,7 +61,7 @@ class VariacaoController {
       await variacao.save();
 
       return res.send({ variacao });
-    } catch {
+    } catch(e) {
       next(e);
     }
   }
@@ -71,6 +70,7 @@ class VariacaoController {
   async update(req, res, next) {
     const {
       codigo,
+      fotos,
       nome,
       preco,
       promocao,
@@ -90,6 +90,7 @@ class VariacaoController {
       if (promocao) variacao.promocao = promocao;
       if (entrega) variacao.entrega = entrega;
       if (quantidade) variacao.quantidade = quantidade;
+      if (fotos) variacao.fotos = fotos;
 
       await variacao.save();
 
@@ -107,8 +108,9 @@ class VariacaoController {
       const variacao = await Variacao.findOne({ _id, loja, produto });
       if (!variacao) return res.status(400).send({ error: 'Variacao não encontrada'});
 
-      const novaImagens = req.files.map(item => item.filename);
-      variacao.fotos = variacao.fotos.filter(item => item).concat(novaImagens);
+      const novasImagens = req.files.map(item => item.filename);
+      console.log(req.files);
+      variacao.fotos = variacao.fotos.filter(item => item).concat(novasImagens);
 
       await variacao.save();
       return res.send({ variacao });
@@ -121,21 +123,19 @@ class VariacaoController {
   async remove(req, res, next) {
     const { id: _id } = req.params;
     const { loja, produto } = req.query;
-
     try {
       const variacao = await Variacao.findOne({ _id, loja, produto });
       if (!variacao) return res.status(400).send({ error: 'Variacao não encontrada'});
 
       const _produto = await Produto.findById(variacao.produto);
       if (!_produto) return res.status(400).send({ error: 'Produto não encontrado'});
-
-      _produto.variacoes = _produto.variacoes.filter(item => item.toSring() !== variacao._id.toString());
-
-      await _produdo.save();
+      _produto.variacoes = _produto.variacoes.filter(item => item.toString() !== variacao._id.toString());
+      console.log(_produto);
+      await _produto.save();
       await variacao.remove();
 
       return res.send({ deleted: true});
-    } catch {
+    } catch(e) {
       next(e);
     }
   }
