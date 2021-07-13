@@ -38,7 +38,7 @@ class PedidoController {
       }));
       return res.send({ pedidos });
     } catch(e) {
-      next(e);
+        next(e);
     }
   }
 
