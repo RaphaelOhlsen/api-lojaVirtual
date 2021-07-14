@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { find } = require('../models/pedido');
 
 const Pedido = mongoose.model('Pedido');
 const Produto = mongoose.model('Produto');
@@ -8,7 +7,7 @@ const Pagamento = mongoose.model('Pagamento');
 const Entrega = mongoose.model('Entrega');
 const Cliente = mongoose.model('Cliente');
 
-// const CarrinhoValidation = require('./validacoes/carrinhoValidation');
+const CarrinhoValidation = require('./validacoes/carrinhoValidation');
 
 class PedidoController {
   /**
@@ -18,18 +17,19 @@ class PedidoController {
   //GET /admin indexAdmin
   async indexAdmin(req,res, next) {
     const { offset, limit, loja} = req.query;
+
     try {
       const pedidos = await Pedido.paginate(
         { loja }, 
         { 
           offset: Number(offset || 0),
           limit: Number(limit || 30), 
-          limit, 
           populate: ['cliente', 'pagamento', 'entrega']
         }
       );
-      pedidos.docs = await Promisse.all(pedidos.doc.map(async (pedido) => {
-        pedido.carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      console.log('Pedidos: ', pedidos)
+      pedidos.docs = await Promise.all(pedidos.docs.map(async (pedido) => {
+        pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
           item.produto = await Produto.findById(item.produto);
           item.variacao = await Variacao.findById(item.variacao);
           return item;
@@ -51,7 +51,7 @@ class PedidoController {
         .findOne({ _id, loja })
         .populate(['cliente', 'pagamento', 'entrega', 'loja']);
       
-      pedido.carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
         item.produto = await Produto.findById(item.produto);
         item.variacao = await Variacao.findById(item.variacao);
         return item;
@@ -90,7 +90,7 @@ class PedidoController {
     try {
       const pedido = await Pedido.findOne({ loja, _id});
 
-      const carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      const carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
         item.produto = await Produto.findById(item.produto);
         item.variacao = await Variacao.findById(item.variacao);
         return item;
@@ -110,7 +110,8 @@ class PedidoController {
     const { offset, limit, loja} = req.query;
     const { id: usuario } = req.payload;
     try {
-      const cliente = await Cliente.findOne({ usuario, loja});
+      const cliente = await Cliente.findOne({ usuario, loja });
+      console.log('cliente: ', cliente);
       const pedidos = await Pedido.paginate(
         { loja, cliente: cliente._id }, 
         { 
@@ -120,8 +121,8 @@ class PedidoController {
           populate: ['cliente', 'pagamento', 'entrega']
         }
       );
-      pedidos.docs = await Promisse.all(pedidos.doc.map(async (pedido) => {
-        pedido.carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      pedidos.docs = await Promise.all(pedidos.docs.map(async (pedido) => {
+        pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
           item.produto = await Produto.findById(item.produto);
           item.variacao = await Variacao.findById(item.variacao);
           return item;
@@ -144,7 +145,7 @@ class PedidoController {
         .findOne({ _id, cliente: cliente._id })
         .populate(['cliente', 'pagamento', 'entrega']);
 
-      pedido.carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
         item.produto = await Produto.findById(item.produto);
         item.variacao = await Variacao.findById(item.variacao);
         return item;
@@ -164,8 +165,8 @@ class PedidoController {
 
     try {
       // CHEGAR DADOS DO CARRINHO 
-      // if(!await CarrinhoValidation(carrinho)) 
-      //   return res.status(422).send({ error: 'Carrinho Inválido'});
+      if(!await CarrinhoValidation(carrinho)) 
+        return res.status(422).send({ error: 'Carrinho Inválido'});
 
       // CHEGAR DADOS DA ENTREGA 
       // if(!await EntregaValidation(carrinho, entrega)) 
@@ -189,6 +190,7 @@ class PedidoController {
         status: 'nao_iniciado',
         custo: entrega.custo,
         prazo: entrega.prazo,
+        tipo: entrega.tipo,
         payload: entrega,
         loja
       });
@@ -212,7 +214,7 @@ class PedidoController {
 
       return res.send({ pedido: Object.assign(
         {},
-        pedido,
+        pedido._doc,
         { entrega: novaEntrega, pagamento: novoPagamento }
       )});
       
@@ -250,7 +252,7 @@ class PedidoController {
       const cliente = await Cliente.findOne({ usuario });
       const pedido = await Pedido.findOne({ _id, cliente: cliente._id });
 
-      const carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      const carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
         item.produto = await Produto.findById(item.produto);
         item.variacao = await Variacao.findById(item.variacao);
         return item;

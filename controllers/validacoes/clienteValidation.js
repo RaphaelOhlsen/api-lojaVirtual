@@ -19,10 +19,28 @@ const ClienteValidation = {
       search: Joi.string().required()
     }
   },
+  searchPedidos: {
+    query: {
+      offset: Joi.number(),
+      limit: Joi.number()
+    },
+    params: {
+      search: Joi.string().required()
+    }
+  },
   showAdmin: {
     params: {
       id: Joi.string().alphanum().length(24).required()
     }
+  },
+  showPedidosCliente: {
+    params: {
+      id: Joi.string().alphanum().length(24).required()
+    },
+    query: {
+      offset: Joi.number(),
+      limit: Joi.number()
+    },
   },
   updateAdmin: {
     params: {

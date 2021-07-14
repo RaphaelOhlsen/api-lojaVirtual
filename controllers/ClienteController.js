@@ -44,8 +44,8 @@ class ClienteController {
           limit: Number(limit || 30),
           populate: ['cliente', 'pagamento', 'entrega'] }
       );
-      pedidos.docs = await Promisse.all(pedidos.doc.map(async (pedido) => {
-        pedido.carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      pedidos.docs = await Promise.all(pedidos.docs.map(async (pedido) => {
+        pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
           item.produto = await Produto.findById(item.produto);
           item.variacao = await Variacao.findById(item.variacao);
           return item;
@@ -91,7 +91,7 @@ class ClienteController {
   async showPedidosCliente(req, res, next) {
     const { id: cliente } = req.params;
     const { offset, limit, loja } = req.query;
-
+    
     try {
       const pedidos = await Pedido.paginate(
         { loja, cliente },
@@ -101,8 +101,8 @@ class ClienteController {
           populate: ['cliente', 'pagamento', 'entrega'] 
         }
       );
-      pedidos.docs = await Promisse.all(pedidos.doc.map(async (pedido) => {
-        pedido.carrinho = await Promisse.all(pedido.carrinho.map(async (item) => {
+      pedidos.docs = await Promise.all(pedidos.docs.map(async (pedido) => {
+        pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
           item.produto = await Produto.findById(item.produto);
           item.variacao = await Variacao.findById(item.variacao);
           return item;

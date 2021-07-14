@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Produto = mongoose.model('Produto');
 const Variacao = mongoose.model('Variacao');
 
-function getCarrinhoValue(carrinho) {
+const getCarrinhoValue = (carrinho) => {
   let precoTotal = 0;
   let quantidade = 0;
 
@@ -15,13 +15,14 @@ function getCarrinhoValue(carrinho) {
   return { precoTotal, quantidade };
 }
 
-function getLojaValue(carrinho) {
-  const results = Promise.all(carrinho.map(async (item) => {
+const getLojaValue = async (carrinho) => {
+  const results = await Promise.all(carrinho.map(async (item) => {
     const produto = await Produto.findById(item.produto);
-    const variacao = await Variacaol.findById(item.variacao);
+    const variacao = await Variacao.findById(item.variacao);
     let preco = 0;
     let quantidade = 0;
-    if( produto && variacao && produto.variacoes.includes(variacao.id) ) {
+    if( produto && variacao && 
+      produto.variacoes.map(item => item.toString()).includes(variacao._id.toString()) ) {
       let _preco = variacao.promocao || variacao.preco;
       preco = _preco * item.quantidade;
       quantidade = item.quantidade
@@ -34,7 +35,7 @@ function getLojaValue(carrinho) {
   return { precoTotal, quantidade };
 }
 
-function CarrinhoValidation(carrinho) {
+async function CarrinhoValidation(carrinho) {
   const {
     precoTotal: precoTotalCarrinho,
     quantidade: quantidadeTotalCarrinho
@@ -42,7 +43,7 @@ function CarrinhoValidation(carrinho) {
   const {
     precoTotal: precoTotalLoja,
     quantidade: quantidadeTotalLoja
-  } = getLojaValue(carrinho);
+  } = await getLojaValue(carrinho);
 
   return precoTotalCarrinho === precoTotalLoja
     && quantidadeTotalCarrinho === quantidadeTotalLoja;
