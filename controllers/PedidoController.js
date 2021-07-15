@@ -167,9 +167,7 @@ class PedidoController {
 
       const registros = await RegistroPedido.find({ pedido: pedido._id });
 
-      const resultado = await calcularFrete({ cep: '38740182', produtos: pedido.carrinho });
-
-      return res.send({ resultado });
+      return res.send({ pedido, registros });
     } catch(e) {
       next(e);
     }
