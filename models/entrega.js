@@ -12,7 +12,7 @@ const EntregaSchema = Schema({
   pedido: { type: Schema.Types.ObjectId, ref: 'Pedido', required: true },
   loja: { type: Schema.Types.ObjectId, ref: 'Loja', required: true },
   payload: { type: Object }
-}, { typestamps: true });
+}, { timestamps: true });
 
 EntregaSchema.plugin(mongoosePaginate);
 

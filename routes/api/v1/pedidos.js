@@ -19,10 +19,6 @@ router.delete('/admin/:id', auth.required, LojaValidation.admin, Validation(Pedi
 // -- carrinho
 router.get('/admin/:id/carrinho', auth.required, LojaValidation.admin, Validation(PedidoValidation.showCarrinhoPedidoAdmin), pedidoController.showCarrinhoPedidoAdmin);
 
-// -- entrega
-// router.get('/admin/:id/entrega', auth.required, LojaValidation.admin, pedidoController.showEntregaPedidoAdmin);
-// router.put('/admin/:id/entrega', auth.required, LojaValidation.admin, pedidoController.updateEntregaPedidoAdmin);
-
 // -- pagamento
 // router.get('/admin/:id/pagamento', auth.required, LojaValidation.admin, pedidoController.showPagamentoPedidoAdmin);
 
@@ -36,10 +32,6 @@ router.delete('/:id', auth.required, Validation(PedidoValidation.remove), pedido
 
 // -- carrinho
 router.get('/:id/carrinho', auth.required, Validation(PedidoValidation.showCarrinhoPedido), pedidoController.showCarrinhoPedido);
-
-// -- entrega
-// router.get('/:id/entrega', auth.required, LojaValidation.admin, pedidoController.showEntregaPedidoAdmin);
-// router.put('/:id/entrega', auth.required, LojaValidation.admin, pedidoController.updateEntregaPedidoAdmin);
 
 // -- pagamento
 // router.get('/:id/pagamento', auth.required, LojaValidation.admin, pedidoController.showPagamentoPedidoAdmin);

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { calculaFrete } = require('./integracoes/correios');
+const { calcularFrete } = require('./integracoes/correios');
 
 const Entrega = mongoose.model('Entrega');
 const Produto = mongoose.model('Produto');
@@ -24,26 +24,27 @@ class EntregaController {
 
   // PUT /:id
   async update(req, res, next) {
-    const { situacao, codigoRastreamento } = req.body;
+    const { status, codigoRastreamento } = req.body;
     const { loja } = req.query;
     const { id: _id } = req.params;
 
     try {
       const entrega = await Entrega.findOne({ loja, _id });
 
-      if(situacao) entrega.situacao = situacao;
-      if(codigoRastreamento) entrega.codigoRastreamento;
+      if(status) entrega.status = status;
+      if(codigoRastreamento) entrega.codigoRastreamento = codigoRastreamento;
 
       const registroPedido = new RegistroPedido({
         pedido: entrega.pedido,
         tipo: 'entrega',
-        situacao,
+        situacao: status,
         payload: req.body
       });
       await registroPedido.save();
       // Enviar email de aviso para cliente - aviso de atualizacao na entrega
 
       await entrega.save();
+      console.log(entrega)
       return res.send({ entrega });
     } catch(e) {
       next(e);
@@ -59,7 +60,7 @@ class EntregaController {
         item.variacao = await Variacao.findById(item.variacao);
         return item;
       }));
-      const resultados = await calculaFrete(cep, _carrinho);
+      const resultados = await calcularFrete({ cep, produtos: _carrinho });
       return res.send({ resultados });
     } catch(e) {
       next(e);
