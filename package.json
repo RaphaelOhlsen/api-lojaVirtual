@@ -37,7 +37,8 @@
     "node-pagseguro": "0.1.9",
     "nodemailer": "4.7.0",
     "request": "2.88.0",
-    "xml2js": "0.4.19"
+    "xml2js": "0.4.19",
+    "xml2json": "^0.12.0"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
