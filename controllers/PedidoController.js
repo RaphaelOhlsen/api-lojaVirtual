@@ -12,6 +12,7 @@ const { calcularFrete } = require('./integracoes/correios');
 
 const CarrinhoValidation = require('./validacoes/carrinhoValidation');
 const EntregaValidation = require('./validacoes/entregaValidation');
+const PagamentoValidation = require('./validacoes/pagamentoValidation');
 class PedidoController {
   /**
    * ADMIN
@@ -191,8 +192,10 @@ class PedidoController {
         return res.status(422).send({ error: 'Dados de Entrega Inválidos'});
 
       // CHEGAR DADOS DO PAGAMENTO 
-      // if(!await PagamentoValidation(carrinho, pagamento)) 
-      //   return res.status(422).send({ error: 'Dados de Pagamento Inválidos'});
+      if(!await PagamentoValidation.checarValorTotal({carrinho, entrega, pagamento})) 
+        return res.status(422).send({ error: 'Dados de Pagamento Inválidos'});
+      if(!PagamentoValidation.checarCartao(pagamento)) 
+        return res.status(422).send({ error: "Dados de Pagamento com Cartao Inválidos" });
 
       const novoPagamento = new Pagamento({
         valor: pagamento.valor,
