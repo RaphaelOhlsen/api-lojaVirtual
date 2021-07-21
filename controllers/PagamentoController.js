@@ -60,12 +60,13 @@ class PagamentoController {
             { path: "entrega" },
             { path: "pagamento" }
         ]);
+        console.log('PEDIDO2: ', pedido);
         pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
             item.produto = await Produto.findById(item.produto);
             item.variacao = await Variacao.findById(item.variacao);
             return item;
         }));
-
+        console.log('PEDIDO: ', pedido);
         const payload = await criarPagamento(senderHash, pedido);
         pagamento.payload = (pagamento.payload) ? pagamento.payload.concat([payload]) : [ payload ];
         if(payload.code) pagamento.pagSeguroCode = payload.code;
