@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.set('useCreateIndex', true);
+// mongoose.set('useCreateIndex', true);
 const { Schema } = mongoose;
 const uniqueValidator = require('mongoose-unique-validator');
 const crypto = require('crypto');

@@ -3,9 +3,8 @@ const PagSeguro = require("../../helpers/pagseguro");
 
 const _criarPagamentoComBoleto = (senderHash, { cliente, carrinho, entrega, pagamento }) => {
     return new Promise((resolver, rejeitar) => {
-
         const pag = new PagSeguro(pagSeguroConfig);
-
+    
         pag.setSender({
             name: cliente.nome,
             email: cliente.usuario.email,

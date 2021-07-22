@@ -15,6 +15,7 @@ const PagamentoSchema = Schema({
       complemento: { type: String },
       bairro: { type: String, required: true },
       cidade: { type: String, required: true },
+      estado: { type: String, required: true },
       CEP: { type: String, required: true },
     },
     required: true

@@ -6,7 +6,6 @@ const PedidoController = require('../../../controllers/PedidoController');
 const { LojaValidation } = require('../../../controllers/validacoes/lojaValidation');
 const { PedidoValidation } = require('../../../controllers/validacoes/pedidoValidation');
 const auth = require('../../auth');
-const { route } = require('./variacoes');
 
 const pedidoController = new PedidoController();
 

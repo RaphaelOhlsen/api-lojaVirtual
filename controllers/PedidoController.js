@@ -187,7 +187,7 @@ class PedidoController {
         return res.status(422).send({ error: 'Carrinho Inválido'});
 
       const cliente = await Cliente.findOne({ usuario, loja }).populate({path:"usuario", select:"_id nome email"});
-      console.log('CLIENTE!!!: ', cliente);
+  
       // CHEGAR DADOS DA ENTREGA 
       if(!await EntregaValidation.checarValorPrazo(cliente.endereco.CEP, carrinho, entrega)) 
         return res.status(422).send({ error: 'Dados de Entrega Inválidos'});
@@ -246,7 +246,7 @@ class PedidoController {
       return res.send({ pedido: Object.assign(
         {},
         pedido._doc,
-        { entrega: novaEntrega, pagamento: novoPagamento }
+        { entrega: novaEntrega, pagamento: novoPagamento, cliente }
       )});
       
     } catch(e) {

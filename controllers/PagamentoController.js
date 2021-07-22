@@ -7,6 +7,7 @@ const Pagamento = mongoose.model('Pagamento');
 const Pedido = mongoose.model('Pedido');
 const Produto = mongoose.model('Produto');
 const Variacao = mongoose.model('Variacao');
+const Usuario = mongoose.model('Usuario');
 const RegistroPedido = mongoose.model("RegistroPedido");
 
 class PagamentoController {
@@ -18,7 +19,7 @@ class PagamentoController {
       const pagamento = await Pagamento.findOne({ _id, loja});
       if(!pagamento) return res.status(400).send({ error: "Pagamento não existe"});
 
-      const registros = await RegistroPedido.find({ pedido: paggamento.pedido, tipo: 'pagamento'});
+      const registros = await RegistroPedido.find({ pedido: pagamento.pedido, tipo: 'pagamento'});
 
       const situacao = (pagamento.pagSeguroCode) ? await getTransactionStatus(pagamento.pagSeguroCode) : null;
       
@@ -60,7 +61,10 @@ class PagamentoController {
             { path: "entrega" },
             { path: "pagamento" }
         ]);
-        console.log('PEDIDO!!!!: ', pedido);
+
+        pedido.cliente.usuario = await Usuario.findById(pedido.cliente.usuario);
+        // console.log('EMAIL: ', pedido.cliente.usuario.email);
+
         pedido.carrinho = await Promise.all(pedido.carrinho.map(async (item) => {
             item.produto = await Produto.findById(item.produto);
             item.variacao = await Variacao.findById(item.variacao);
@@ -73,7 +77,7 @@ class PagamentoController {
         await pagamento.save();
 
         // return res.send({ pagamento: { ...pagamento._doc, payload: null } });
-        return res.send({ pagamento, payload });
+        return res.send({ pagamento });
     }catch(e){
         next(e);
     }
