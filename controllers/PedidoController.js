@@ -200,7 +200,7 @@ class PedidoController {
 
       const novoPagamento = new Pagamento({
         valor: pagamento.valor,
-        parcelas: pagamento.parecelas || 1,
+        parcelas: pagamento.parcelas || 1,
         forma: pagamento.forma,
         status: 'iniciando',
         endereco: pagamento.endereco,

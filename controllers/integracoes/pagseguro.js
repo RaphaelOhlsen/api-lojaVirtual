@@ -4,7 +4,7 @@ const PagSeguro = require("../../helpers/pagseguro");
 const _criarPagamentoComBoleto = (senderHash, { cliente, carrinho, entrega, pagamento }) => {
     return new Promise((resolver, rejeitar) => {
         const pag = new PagSeguro(pagSeguroConfig);
-    
+        
         pag.setSender({
             name: cliente.nome,
             email: cliente.usuario.email,
@@ -46,6 +46,8 @@ const _criarPagamentoComBoleto = (senderHash, { cliente, carrinho, entrega, paga
             description: `Custo de Entrega - Correios`
         });
 
+        console.log('VALOR: ------------------', pagamento.valor)
+
         pag.sendTransaction({
             method: "boleto",
             value: pagamento.valor,
@@ -58,7 +60,7 @@ const _criarPagamentoComBoleto = (senderHash, { cliente, carrinho, entrega, paga
 
 const _criarPagamentoComCartao = (senderHash, { cliente, carrinho, entrega, pagamento }) => {
     return new Promise((resolver, rejeitar) => {
-
+        
         const pag = new PagSeguro(pagSeguroConfig);
 
         pag.setSender({
@@ -96,6 +98,7 @@ const _criarPagamentoComCartao = (senderHash, { cliente, carrinho, entrega, paga
                 description: `${item.produto.titulo} - ${item.variacao.nome}`
             });
         });
+
         pag.addItem({
             qtde: 1,
             value: entrega.custo,
@@ -110,6 +113,7 @@ const _criarPagamentoComCartao = (senderHash, { cliente, carrinho, entrega, paga
             cpf_cnpj: ( pagamento.cartao.cpf || cliente.cpf ).replace(/[-\.]/g, "")
         });
 
+        
         pag.sendTransaction({
             method: "creditCard",
             value: pagamento.valor % 2 !== 0 && pagamento.parcelas !== 1 ? pagamento.valor + 0.01 : pagamento.valor,

@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // PAGSEGURO
-router.post('notificacao', pagamentoController.verNotificacao);
+router.post('/notificacao', pagamentoController.verNotificacao);
 router.get('/session', pagamentoController.getSessionId);
 
 // CLIENTE

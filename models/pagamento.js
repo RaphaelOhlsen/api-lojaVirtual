@@ -6,7 +6,7 @@ const { Schema } = mongoose;
 const PagamentoSchema = Schema({
   valor: { type: Number, required: true },
   forma: { type: String, required: true },
-  parcelado: { type: Number, default: 1 },
+  parcelas: { type: Number, default: 1 },
   status: { type: String, required: true },
   endereco: {
     type: {
