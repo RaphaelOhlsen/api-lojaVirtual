@@ -14,6 +14,7 @@ const { calcularFrete } = require('./integracoes/correios');
 const CarrinhoValidation = require('./validacoes/carrinhoValidation');
 const EntregaValidation = require('./validacoes/entregaValidation');
 const PagamentoValidation = require('./validacoes/pagamentoValidation');
+const QuantidadeValidation = require('./validacoes/quantidadeValidation');
 
 const EmailController = require('./EmailController');
 class PedidoController {
@@ -94,6 +95,8 @@ class PedidoController {
       EmailController.cancelarPedido({ usuario: pedido.cliente.usuario, pedido });
 
       await pedido.save();
+
+      await QuantidadeValidation.atualizarQuantidade('cancelar_pedido', pedido);
 
       return res.send({ cancelado: true });
     } catch(e) {
@@ -192,6 +195,9 @@ class PedidoController {
 
       const cliente = await Cliente.findOne({ usuario, loja }).populate({path:"usuario", select:"_id nome email"});
   
+      if(!await QuantidadeValidation.validarQuantidadeDisponivel(carrinho))
+        return res.status(400).send({ error: 'Produtos não tem quantidade disponivel'});
+
       // CHEGAR DADOS DA ENTREGA 
       if(!await EntregaValidation.checarValorPrazo(cliente.endereco.CEP, carrinho, entrega)) 
         return res.status(422).send({ error: 'Dados de Entrega Inválidos'});
@@ -237,6 +243,8 @@ class PedidoController {
       await novoPagamento.save();
       await novaEntrega.save();
 
+      await QuantidadeValidation.atualizarQuantidade('salvar_pedido', pedido);
+
       const registroPedido = new RegistroPedido({
         pedido: pedido._id,
         tipo: 'pedido',
@@ -275,9 +283,6 @@ class PedidoController {
       if(!pedido) return res.status(400).send({ error: "Pedido não encontrado" });
       pedido.cancelado = true;
 
-      
-      await pedido.save();
-
       const registroPedido = new RegistroPedido({
         pedido: pedido._id,
         tipo: 'pedido',
@@ -291,6 +296,10 @@ class PedidoController {
       administradores.forEach((usuario) => {
         EmailController.cancelarPedido({ pedido, usuario });
       });
+
+      await pedido.save();
+      
+      await QuantidadeValidation.atualizarQuantidade('cancelar_pedido', pedido);
 
       return res.send({ cancelado: true });
     } catch(e) {
