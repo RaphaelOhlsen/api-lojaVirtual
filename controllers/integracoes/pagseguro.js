@@ -59,6 +59,7 @@ const _criarPagamentoComBoleto = (senderHash, { cliente, carrinho, entrega, paga
 }   
 
 const _criarPagamentoComCartao = (senderHash, { cliente, carrinho, entrega, pagamento }) => {
+
     return new Promise((resolver, rejeitar) => {
         
         const pag = new PagSeguro(pagSeguroConfig);
@@ -113,7 +114,7 @@ const _criarPagamentoComCartao = (senderHash, { cliente, carrinho, entrega, paga
             cpf_cnpj: ( pagamento.cartao.cpf || cliente.cpf ).replace(/[-\.]/g, "")
         });
 
-        
+        console.log('antes de enviar: ', pagamento.valor)
         pag.sendTransaction({
             method: "creditCard",
             value: pagamento.valor % 2 !== 0 && pagamento.parcelas !== 1 ? pagamento.valor + 0.01 : pagamento.valor,

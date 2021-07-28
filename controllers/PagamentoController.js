@@ -10,6 +10,8 @@ const Variacao = mongoose.model('Variacao');
 const Usuario = mongoose.model('Usuario');
 const RegistroPedido = mongoose.model("RegistroPedido");
 
+const EmailController = require('./EmailController');
+
 class PagamentoController {
   // CLIENTES 
   async show (req,res,next) {
@@ -102,14 +104,14 @@ class PagamentoController {
         });
         await registroPedido.save();
         // Enviar email de aviso para o cliente - aviso de atualizacao de pagamento
-        // const pedido = await Pedido.findById(pagamento.pedido).populate({ path:"cliente", populate: { path: "usuario" } });
-        // EmailController.atualizarPedido({ 
-        //     usuario: pedido.cliente.usuario, 
-        //     pedido, 
-        //     tipo: "pagamento",
-        //     status,
-        //     data: new Date()
-        // });
+        const pedido = await Pedido.findById(pagamento.pedido).populate({ path:"cliente", populate: { path: "usuario" } });
+        EmailController.atualizarPedido({ 
+            usuario: pedido.cliente.usuario, 
+            pedido, 
+            tipo: "pagamento",
+            status,
+            data: new Date()
+        });
 
         await pagamento.save();
 
@@ -165,17 +167,17 @@ class PagamentoController {
           
           await registroPedido.save();
           // Enviar email de aviso para o cliente - aviso de atualizacao de pagamento
-          // const pedido = await Pedido.findById(pagamento.pedido).populate({ path:"cliente", populate: { path: "usuario" } });
-          // EmailController.atualizarPedido({ 
-          //     usuario: pedido.cliente.usuario, 
-          //     pedido, 
-          //     tipo: "pagamento",
-          //     status: situacao.status,
-          //     data: new Date()
-          // });
+          const pedido = await Pedido.findById(pagamento.pedido).populate({ path:"cliente", populate: { path: "usuario" } });
+          EmailController.atualizarPedido({ 
+              usuario: pedido.cliente.usuario, 
+              pedido, 
+              tipo: "pagamento",
+              status: situacao.status,
+              data: new Date()
+          });
 
-          // if( situacao.status === "Paga" ) await QuantidadeValidation.atualizarQuantidade("confirmar_pedido", pedido);
-          // else if( situacao.status === "Cancelada" ) await QuantidadeValidation.atualizarQuantidade("cancelar_pedido", pedido);
+          if( situacao.status === "Paga" ) await QuantidadeValidation.atualizarQuantidade("confirmar_pedido", pedido);
+          else if( situacao.status === "Cancelada" ) await QuantidadeValidation.atualizarQuantidade("cancelar_pedido", pedido);
       }
       return res.send({ success: true });
 
